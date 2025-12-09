@@ -51,6 +51,8 @@
 
 在 Cloudflare Workers 后台 -> Settings -> Variables 中配置以下变量：
 
+
+
 | 变量名 | 说明 | 示例 / 备注 |
 | :--- | :--- | :--- |
 | `AZURE_TENANT_ID` | Azure 租户 ID | `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` |
@@ -60,12 +62,21 @@
 | `TURNSTILE_SITE_KEY` | CF Turnstile 站点 ID | 前端显示用 Site Key |
 | `DEFAULT_DOMAIN` | 默认域名后缀 | `example.onmicrosoft.com` (不带 @) |
 | `ADMIN_TOKEN` | 后台访问密码 | `MySuperSecretToken123` |
-| `SKU_MAP` | 订阅映射表 (JSON) | `{"E5开发版":"你的SKU_ID_1", "A1学生版":"你的SKU_ID_2"}` |
+| `SKU_MAP` | 订阅映射表 (填获取的JSON，获取方式和注意事项在下方！务必仔细阅读！) | `{"E5开发版":"你的SKU_ID_1", "A1学生版":"你的SKU_ID_2"}` |
 | `HIDDEN_USER` | **(可选)** 隐藏管理员账号 | `admin@example.onmicrosoft.com` (完全匹配，防删除) |
 | `ENABLE_DEBUG` | **(可选)** 调试模式 | 填 `true` 开启后端日志，生产环境建议留空 |
 
 ### 关于 SKU_MAP 的获取
-部署前，你可以先随便填一个 JSON，访问 `/admin?token=你的Token`，点击“查询订阅用量”按钮，即可获取你租户下所有真实的 SKU ID。
+两种获取方式（都需要参考下方的json进行自行填写）
+
+json格式：`{"E5开发版":"你的SKU_ID_1", "A1学生版":"你的SKU_ID_2"}`
+
+第一种方式：部署前，你可以先随便填一个 JSON，访问 `/admin?token=你的Token`，点击“查询订阅用量”按钮，即可获取你租户下所有真实的 SKU ID。
+
+第二种方式：部署并设置好变量后，在浏览器访问： https://你的worker域名.workers.dev/admin/api/licenses?token=mySecret123 (把 mySecret123 换成你刚才设置的 ADMIN_TOKEN)
+页面会返回一段 JSON（**不要直接填写这个json到环境变量，要用指定格式的json！**）。找到 skuPartNumber 是 DEVELOPERPACK_E5 或者 ENTERPRISEPACK (即 E3) 的那一项。
+
+### **请务必注意，所有变量的变量类型都必须使用Text或Secret！包括SKU_MAP也是！不要用JSON变量类型！**
 
 ## 🚀 快速开始
 
